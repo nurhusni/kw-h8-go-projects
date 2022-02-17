@@ -3,22 +3,21 @@ package structs
 import (
 	"time"
 
-	"github.com/jinzhu/gorm"
+	_ "gorm.io/gorm"
 )
 
 type Orders struct {
-	gorm.Model
-	// OrderId      uint `gorm:"primarykey"`
+	// gorm.Model
+	OrderID      uint `gorm:"primaryKey"`
 	CustomerName string
 	OrderedAt    time.Time
-	Items        Items
 }
 
 type Items struct {
-	gorm.Model
-	// ItemId      uint `gorm:"primarykey"`
+	// gorm.Model
+	ItemID      uint `gorm:"primaryKey"`
 	ItemCode    int64
 	Description string
 	Quantity    int64
-	// OrderId     uint `gorm:"foreignKey:ID"`
+	Orders      Orders `gorm:"foreignKey:OrderID"`
 }

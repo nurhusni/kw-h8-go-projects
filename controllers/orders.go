@@ -16,8 +16,8 @@ type InDB struct {
 
 func (idb *InDB) CreateOrder(c *gin.Context) {
 	var (
-		// item   structs.Items
 		order  structs.Orders
+		item   structs.Items
 		result gin.H
 	)
 
@@ -28,15 +28,29 @@ func (idb *InDB) CreateOrder(c *gin.Context) {
 
 	order.CustomerName = customerName
 	order.OrderedAt = time.Now()
-	order.Items.ItemCode, _ = strconv.ParseInt(itemCode, 10, 64)
-	order.Items.Description = description
-	order.Items.Quantity, _ = strconv.ParseInt(quantity, 10, 64)
+	item.ItemCode, _ = strconv.ParseInt(itemCode, 10, 64)
+	item.Description = description
+	item.Quantity, _ = strconv.ParseInt(quantity, 10, 64)
 
-	idb.DB.Create(&order)
+	err := idb.DB.Create(&order)
+	if err != nil {
+		result = gin.H{
+			"result": "Order data isn't created",
+		}
+		panic(err)
+	}
+
+	err = idb.DB.Create(&item)
+	if err != nil {
+		result = gin.H{
+			"result": "Item data isn't created",
+		}
+		panic(err)
+	}
 
 	result = gin.H{
 		"order": order,
-		// "item":  item,
+		"item":  item,
 	}
 
 	c.JSON(http.StatusOK, result)
@@ -45,12 +59,10 @@ func (idb *InDB) CreateOrder(c *gin.Context) {
 func (idb *InDB) GetOrders(c *gin.Context) {
 	var (
 		allOrders []structs.Orders
-		// allItems  []structs.Items
-		result gin.H
+		result    gin.H
 	)
 
 	idb.DB.Find(&allOrders)
-	// idb.DB.Find(&allItems)
 
 	if len(allOrders) < 1 {
 		result = gin.H{
@@ -59,7 +71,6 @@ func (idb *InDB) GetOrders(c *gin.Context) {
 	} else {
 		result = gin.H{
 			"result": allOrders,
-			// "orders": allOrders,
 		}
 	}
 
@@ -69,7 +80,9 @@ func (idb *InDB) GetOrders(c *gin.Context) {
 func (idb *InDB) UpdateOrder(c *gin.Context) {
 	var (
 		order    structs.Orders
+		item     structs.Items
 		newOrder structs.Orders
+		newItem  structs.Items
 		result   gin.H
 	)
 
@@ -87,21 +100,28 @@ func (idb *InDB) UpdateOrder(c *gin.Context) {
 		}
 	}
 
-	order.CustomerName = customerName
-	order.OrderedAt = time.Now()
-	order.Items.ItemCode, _ = strconv.ParseInt(itemCode, 10, 64)
-	order.Items.Description = description
-	order.Items.Quantity, _ = strconv.ParseInt(quantity, 10, 64)
+	newOrder.CustomerName = customerName
+	newOrder.OrderedAt = time.Now()
+	newItem.ItemCode, _ = strconv.ParseInt(itemCode, 10, 64)
+	newItem.Description = description
+	newItem.Quantity, _ = strconv.ParseInt(quantity, 10, 64)
 
 	err = idb.DB.Model(&order).Updates(&newOrder).Error
 	if err != nil {
 		result = gin.H{
-			"result": "Update failed",
+			"result": "Update order data failed",
 		}
-	} else {
+	}
+
+	err = idb.DB.Model(&item).Updates(&newItem).Error
+	if err != nil {
 		result = gin.H{
-			"result": "Successfully updated data",
+			"result": "Update item data failed",
 		}
+	}
+
+	result = gin.H{
+		"result": "Successfully updated data",
 	}
 
 	c.JSON(http.StatusOK, result)
