@@ -45,7 +45,24 @@ func (idb *InDB) CreateOrder(c *gin.Context) {
 }
 
 func (idb *InDB) GetOrders(c *gin.Context) {
+	var (
+		orders []structs.Orders
+		result gin.H
+	)
 
+	idb.DB.Find(&orders)
+
+	if len(orders) < 1 {
+		result = gin.H{
+			"result": nil,
+		}
+	} else {
+		result = gin.H{
+			"result": orders,
+		}
+	}
+
+	c.JSON(http.StatusOK, result)
 }
 
 func (idb *InDB) UpdateOrder(c *gin.Context) {
