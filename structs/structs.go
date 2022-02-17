@@ -12,7 +12,7 @@ type Items struct {
 	ItemCode    int
 	Description string
 	Quantity    int
-	OrderId     int
+	OrderId     Orders `gorm:"foreignkey:OrderId"`
 }
 
 type Orders struct {
