@@ -20,4 +20,5 @@ type Orders struct {
 	OrderId      int
 	CustomerName string
 	OrderedAt    time.Time
+	Items        []Items
 }
