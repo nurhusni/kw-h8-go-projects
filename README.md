@@ -13,3 +13,6 @@ go mod vendor
 ```bash
 go run main.go
 ```
+
+### Using the API
+API documentation can be found [here](https://documenter.getpostman.com/view/12684048/UVkiTJuC).
