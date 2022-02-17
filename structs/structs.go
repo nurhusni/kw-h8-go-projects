@@ -9,16 +9,15 @@ import (
 type Items struct {
 	gorm.Model
 	ItemId      uint
-	ItemCode    uint
+	ItemCode    int64
 	Description string
-	Quantity    uint
-	OrderId     Orders `gorm:"foreignkey:OrderId"`
+	Quantity    int64
+	OrderId     uint
 }
 
 type Orders struct {
 	gorm.Model
-	OrderId      uint
+	OrderId      Items `gorm:"foreignkey:OrderId"`
 	CustomerName string
 	OrderedAt    time.Time
-	Items        []Items
 }
