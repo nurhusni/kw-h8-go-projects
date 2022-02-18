@@ -140,7 +140,6 @@ func (idb *InDB) DeleteOrder(c *gin.Context) {
 func (idb *InDB) DeleteTable(c *gin.Context) {
 	var result gin.H
 
-	// itemErr := idb.DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&[]structs.Item{})
 	orderErr := idb.DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&[]structs.Order{}).Error
 
 	if orderErr != nil {
