@@ -32,7 +32,7 @@ func (idb *InDB) CreateOrder(c *gin.Context) {
 	order.Item.Description = description
 	order.Item.Quantity, _ = strconv.ParseInt(quantity, 10, 64)
 
-	err := idb.DB.Create(&order)
+	err := idb.DB.Create(&order).Error
 	if err != nil {
 		result = gin.H{
 			"result": "Order data isn't created",
@@ -81,7 +81,7 @@ func (idb *InDB) UpdateOrder(c *gin.Context) {
 	customerName := c.PostForm("customer_name")
 	itemCode := c.PostForm("item_code")
 
-	err := idb.DB.Preload("Item").First(&order, id).Error
+	err := idb.DB.First(&order, id).Error
 	if err != nil {
 		result = gin.H{
 			"result": "Data not found",
@@ -95,8 +95,9 @@ func (idb *InDB) UpdateOrder(c *gin.Context) {
 	newOrder.Item.Description = description
 	newOrder.Item.Quantity, _ = strconv.ParseInt(quantity, 10, 64)
 
-	err = idb.DB.Preload("Item").Model(&order).Updates(&newOrder).Error
-	if err != nil {
+	assocErr := idb.DB.Model(&order.Item).Updates(&newOrder.Item).Error
+	rootErr := idb.DB.Model(&order).Updates(&newOrder).Error
+	if rootErr != nil && assocErr != nil {
 		result = gin.H{
 			"result": "Updating order data failed",
 		}
@@ -140,13 +141,12 @@ func (idb *InDB) DeleteTable(c *gin.Context) {
 	var result gin.H
 
 	// itemErr := idb.DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&[]structs.Item{})
-	orderErr := idb.DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&[]structs.Order{})
+	orderErr := idb.DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&[]structs.Order{}).Error
 
 	if orderErr != nil {
 		result = gin.H{
 			"result": "Deletion is unsuccessful",
 		}
-		panic(orderErr)
 	} else {
 		result = gin.H{
 			"result": "Tables are deleted successfully",
