@@ -64,7 +64,8 @@ func (idb *InDB) GetOrders(c *gin.Context) {
 		result gin.H
 	)
 
-	idb.DB.Find(&orders)
+	// idb.DB.Find(&orders)
+	idb.DB.Preload("Item").Find(&orders)
 
 	if len(orders) <= 0 {
 		result = gin.H{
@@ -170,6 +171,11 @@ func (idb *InDB) DeleteTable(c *gin.Context) {
 	if orderErr != nil {
 		result = gin.H{
 			"result": "Deletion is unsuccessful",
+		}
+		panic(orderErr)
+	} else {
+		result = gin.H{
+			"result": "Tables are deleted successfully",
 		}
 	}
 
