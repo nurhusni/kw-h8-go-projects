@@ -18,6 +18,6 @@ func DBInit() *gorm.DB {
 
 	fmt.Println("Database connected")
 
-	db.AutoMigrate(structs.Items{}, structs.Orders{})
+	db.AutoMigrate(structs.Item{}, structs.Order{})
 	return db
 }

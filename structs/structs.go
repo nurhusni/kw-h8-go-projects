@@ -3,21 +3,24 @@ package structs
 import (
 	"time"
 
-	_ "gorm.io/gorm"
+	"gorm.io/gorm"
+	// _ "gorm.io/gorm"
 )
 
-type Orders struct {
-	// gorm.Model
-	OrderID      uint `gorm:"primaryKey"`
+type Order struct {
+	gorm.Model
+	// OrderID      uint `gorm:"primaryKey;autoIncrement:true"`
 	CustomerName string
 	OrderedAt    time.Time
+	Item         Item `gorm:"foreignKey:OrderID;references:ID"`
+	// Item Item `gorm:"foreignKey:OrderID;references:OrderID"`
 }
 
-type Items struct {
-	// gorm.Model
-	ItemID      uint `gorm:"primaryKey"`
+type Item struct {
+	gorm.Model
+	// ItemID      uint `gorm:"primaryKey;autoIncrement:true"`
 	ItemCode    int64
 	Description string
 	Quantity    int64
-	Orders      Orders `gorm:"foreignKey:OrderID"`
+	OrderID     uint
 }

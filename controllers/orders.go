@@ -16,8 +16,8 @@ type InDB struct {
 
 func (idb *InDB) CreateOrder(c *gin.Context) {
 	var (
-		order  structs.Orders
-		item   structs.Items
+		order structs.Order
+		// item   structs.Item
 		result gin.H
 	)
 
@@ -26,31 +26,33 @@ func (idb *InDB) CreateOrder(c *gin.Context) {
 	description := c.PostForm("description")
 	quantity := c.PostForm("quantity")
 
+	// item.ItemCode, _ = strconv.ParseInt(itemCode, 10, 64)
+	// item.Description = description
+	// item.Quantity, _ = strconv.ParseInt(quantity, 10, 64)
+
+	// err := idb.DB.Create(&item)
+	// if err != nil {
+	// 	result = gin.H{
+	// 		"result": "Item data isn't created",
+	// 	}
+	// }
+
 	order.CustomerName = customerName
 	order.OrderedAt = time.Now()
-	item.ItemCode, _ = strconv.ParseInt(itemCode, 10, 64)
-	item.Description = description
-	item.Quantity, _ = strconv.ParseInt(quantity, 10, 64)
+
+	order.Item.ItemCode, _ = strconv.ParseInt(itemCode, 10, 64)
+	order.Item.Description = description
+	order.Item.Quantity, _ = strconv.ParseInt(quantity, 10, 64)
 
 	err := idb.DB.Create(&order)
 	if err != nil {
 		result = gin.H{
 			"result": "Order data isn't created",
 		}
-		panic(err)
-	}
-
-	err = idb.DB.Create(&item)
-	if err != nil {
-		result = gin.H{
-			"result": "Item data isn't created",
-		}
-		panic(err)
 	}
 
 	result = gin.H{
-		"order": order,
-		"item":  item,
+		"result": order,
 	}
 
 	c.JSON(http.StatusOK, result)
@@ -58,19 +60,19 @@ func (idb *InDB) CreateOrder(c *gin.Context) {
 
 func (idb *InDB) GetOrders(c *gin.Context) {
 	var (
-		allOrders []structs.Orders
-		result    gin.H
+		orders []structs.Order
+		result gin.H
 	)
 
-	idb.DB.Find(&allOrders)
+	idb.DB.Find(&orders)
 
-	if len(allOrders) < 1 {
+	if len(orders) <= 0 {
 		result = gin.H{
 			"result": nil,
 		}
 	} else {
 		result = gin.H{
-			"result": allOrders,
+			"result": orders,
 		}
 	}
 
@@ -79,11 +81,11 @@ func (idb *InDB) GetOrders(c *gin.Context) {
 
 func (idb *InDB) UpdateOrder(c *gin.Context) {
 	var (
-		order    structs.Orders
-		item     structs.Items
-		newOrder structs.Orders
-		newItem  structs.Items
-		result   gin.H
+		order structs.Order
+		// item     structs.Item
+		newOrder structs.Order
+		// newItem  structs.Item
+		result gin.H
 	)
 
 	id := c.Query("id")
@@ -102,23 +104,28 @@ func (idb *InDB) UpdateOrder(c *gin.Context) {
 
 	newOrder.CustomerName = customerName
 	newOrder.OrderedAt = time.Now()
-	newItem.ItemCode, _ = strconv.ParseInt(itemCode, 10, 64)
-	newItem.Description = description
-	newItem.Quantity, _ = strconv.ParseInt(quantity, 10, 64)
+
+	// newItem.ItemCode, _ = strconv.ParseInt(itemCode, 10, 64)
+	// newItem.Description = description
+	// newItem.Quantity, _ = strconv.ParseInt(quantity, 10, 64)
+
+	newOrder.Item.ItemCode, _ = strconv.ParseInt(itemCode, 10, 64)
+	newOrder.Item.Description = description
+	newOrder.Item.Quantity, _ = strconv.ParseInt(quantity, 10, 64)
 
 	err = idb.DB.Model(&order).Updates(&newOrder).Error
 	if err != nil {
 		result = gin.H{
-			"result": "Update order data failed",
+			"result": "Updating order data failed",
 		}
 	}
 
-	err = idb.DB.Model(&item).Updates(&newItem).Error
-	if err != nil {
-		result = gin.H{
-			"result": "Update item data failed",
-		}
-	}
+	// err = idb.DB.Model(&item).Updates(&newItem).Error
+	// if err != nil {
+	// 	result = gin.H{
+	// 		"result": "Updating item data failed",
+	// 	}
+	// }
 
 	result = gin.H{
 		"result": "Successfully updated data",
@@ -129,7 +136,7 @@ func (idb *InDB) UpdateOrder(c *gin.Context) {
 
 func (idb *InDB) DeleteOrder(c *gin.Context) {
 	var (
-		order  structs.Orders
+		order  structs.Order
 		result gin.H
 	)
 
@@ -137,7 +144,7 @@ func (idb *InDB) DeleteOrder(c *gin.Context) {
 	err := idb.DB.First(&order, id).Error
 	if err != nil {
 		result = gin.H{
-			"result": "Data not found",
+			"result": "Data wasn't found",
 		}
 	}
 
@@ -155,6 +162,16 @@ func (idb *InDB) DeleteOrder(c *gin.Context) {
 }
 
 func (idb *InDB) DeleteTable(c *gin.Context) {
-	idb.DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&[]structs.Items{})
-	idb.DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&[]structs.Orders{})
+	var result gin.H
+
+	// itemErr := idb.DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&[]structs.Item{})
+	orderErr := idb.DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&[]structs.Order{})
+
+	if orderErr != nil {
+		result = gin.H{
+			"result": "Deletion is unsuccessful",
+		}
+	}
+
+	c.JSON(http.StatusOK, result)
 }
