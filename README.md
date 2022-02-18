@@ -1,6 +1,6 @@
-# API Project using Go, and GORM
+# API Project using Go and GORM
 
-This is the second assignment for the KoinWorks-Hacktiv8's Scalable Web Service with Golang course. On this assignment, I created a CRUD server using Go, and GORM connected with API.
+This is the second assignment for the KoinWorks-Hacktiv8's Scalable Web Service with Golang course. On this assignment, I created a CRUD server using Go and GORM connected with API.
 
 ### Initialization
 ```bash
