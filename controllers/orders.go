@@ -16,8 +16,7 @@ type InDB struct {
 
 func (idb *InDB) CreateOrder(c *gin.Context) {
 	var (
-		order structs.Order
-		// item   structs.Item
+		order  structs.Order
 		result gin.H
 	)
 
@@ -25,17 +24,6 @@ func (idb *InDB) CreateOrder(c *gin.Context) {
 	itemCode := c.PostForm("item_code")
 	description := c.PostForm("description")
 	quantity := c.PostForm("quantity")
-
-	// item.ItemCode, _ = strconv.ParseInt(itemCode, 10, 64)
-	// item.Description = description
-	// item.Quantity, _ = strconv.ParseInt(quantity, 10, 64)
-
-	// err := idb.DB.Create(&item)
-	// if err != nil {
-	// 	result = gin.H{
-	// 		"result": "Item data isn't created",
-	// 	}
-	// }
 
 	order.CustomerName = customerName
 	order.OrderedAt = time.Now()
@@ -64,7 +52,6 @@ func (idb *InDB) GetOrders(c *gin.Context) {
 		result gin.H
 	)
 
-	// idb.DB.Find(&orders)
 	idb.DB.Preload("Item").Find(&orders)
 
 	if len(orders) <= 0 {
@@ -82,11 +69,9 @@ func (idb *InDB) GetOrders(c *gin.Context) {
 
 func (idb *InDB) UpdateOrder(c *gin.Context) {
 	var (
-		order structs.Order
-		// item     structs.Item
+		order    structs.Order
 		newOrder structs.Order
-		// newItem  structs.Item
-		result gin.H
+		result   gin.H
 	)
 
 	id := c.Query("id")
@@ -96,7 +81,7 @@ func (idb *InDB) UpdateOrder(c *gin.Context) {
 	customerName := c.PostForm("customer_name")
 	itemCode := c.PostForm("item_code")
 
-	err := idb.DB.First(&order, id).Error
+	err := idb.DB.Preload("Item").First(&order, id).Error
 	if err != nil {
 		result = gin.H{
 			"result": "Data not found",
@@ -106,27 +91,16 @@ func (idb *InDB) UpdateOrder(c *gin.Context) {
 	newOrder.CustomerName = customerName
 	newOrder.OrderedAt = time.Now()
 
-	// newItem.ItemCode, _ = strconv.ParseInt(itemCode, 10, 64)
-	// newItem.Description = description
-	// newItem.Quantity, _ = strconv.ParseInt(quantity, 10, 64)
-
 	newOrder.Item.ItemCode, _ = strconv.ParseInt(itemCode, 10, 64)
 	newOrder.Item.Description = description
 	newOrder.Item.Quantity, _ = strconv.ParseInt(quantity, 10, 64)
 
-	err = idb.DB.Model(&order).Updates(&newOrder).Error
+	err = idb.DB.Preload("Item").Model(&order).Updates(&newOrder).Error
 	if err != nil {
 		result = gin.H{
 			"result": "Updating order data failed",
 		}
 	}
-
-	// err = idb.DB.Model(&item).Updates(&newItem).Error
-	// if err != nil {
-	// 	result = gin.H{
-	// 		"result": "Updating item data failed",
-	// 	}
-	// }
 
 	result = gin.H{
 		"result": "Successfully updated data",
