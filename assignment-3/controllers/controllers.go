@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"math/rand"
 	"net/http"
+	"path"
 )
 
 type Values struct {
@@ -66,18 +67,18 @@ func getData() (int, int) {
 func ShowStatus(w http.ResponseWriter, r *http.Request) {
 	waterValue, windValue := getData()
 
-	values := &Values{
-		Water: waterValue,
-		Wind:  windValue,
-	}
-
-	wa := water{value: values.Water}
-	wi := wind{value: values.Wind}
+	wa := water{value: waterValue}
+	wi := wind{value: windValue}
 
 	waterStatus := wa.getStatus()
 	windStatus := wi.getStatus()
 
-	_, _ = waterStatus, windStatus
+	values := &Values{
+		Water:       waterValue,
+		Wind:        windValue,
+		WaterStatus: waterStatus,
+		WindStatus:  windStatus,
+	}
 
 	v, err := json.Marshal(values)
 	if err != nil {
@@ -85,14 +86,14 @@ func ShowStatus(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "GET" {
-		tpl, err := template.ParseFiles("index.html")
+		filepath := path.Join("views", "index.html")
+		tpl, err := template.ParseFiles(filepath)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		tpl.Execute(w, waterStatus)
-		tpl.Execute(w, windStatus)
+		tpl.Execute(w, values)
 
 		json.NewEncoder(w).Encode(v)
 		return
