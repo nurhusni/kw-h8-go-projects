@@ -4,7 +4,44 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700&display=swap" rel="stylesheet">
     <title>Wind & Water Status</title>
+    <!-- <link href="styles.css" rel="stylesheet"> -->
+
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            color: white;
+        }
+        .container {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            justify-content: space-evenly;
+            align-items: center;
+            top: 0px;
+            bottom: 0px;
+        }
+
+        .subcontainer {
+            border-radius: 50px;
+            text-align: center;
+        }
+
+        .container-water {
+            flex: 1 1 1 1;
+            background-color: blue;
+            padding: 150px;
+        }
+
+        .container-wind {
+            flex: 1 1 1 1;
+            background-color: green;
+            padding: 150px;
+        }
+    </style>
 
     <script>
         function autoRefresh() {
@@ -14,11 +51,29 @@
     </script>
 </head>
 <body>
-    <div>
-        Water: {{.Water}} meter <br>
-        Water Status: {{.WaterStatus}} <br>
-        Wind: {{.Wind}} meter/detik <br>
-        Wind Status: {{.WindStatus}} <br>
+    <div class="container">
+        <div class="subcontainer container-water">
+            <h1>
+                Water <br>
+            </h1>
+            <h3>
+                {{.Water}} meter <br><br>
+            </h3>
+            <h1>
+                {{.WaterStatus}} <br>
+            </h1>
+        </div>
+        <div class="subcontainer container-wind">
+            <h1>
+                Wind <br>
+            </h1>
+            <h3>
+                {{.Wind}} meter/detik <br><br>
+            </h3>
+            <h1>
+                {{.WindStatus}} <br>
+            </h1>
+        </div>
     </div>
 </body>
 </html>

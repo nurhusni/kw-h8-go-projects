@@ -32,11 +32,11 @@ func (wa water) getStatus() string {
 
 	switch {
 	case wa.value <= 5:
-		status = "aman"
+		status = "Aman"
 	case wa.value >= 6 && wa.value <= 8:
-		status = "siaga"
+		status = "Siaga"
 	default:
-		status = "bahaya"
+		status = "Bahaya"
 	}
 
 	return status
@@ -47,11 +47,11 @@ func (wi wind) getStatus() string {
 
 	switch {
 	case wi.value <= 6:
-		status = "aman"
+		status = "Aman"
 	case wi.value >= 7 && wi.value <= 15:
-		status = "siaga"
+		status = "Siaga"
 	default:
-		status = "bahaya"
+		status = "Bahaya"
 	}
 
 	return status
