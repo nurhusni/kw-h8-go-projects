@@ -5,12 +5,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wind & Water Status</title>
+
+    <script>
+        function autoRefresh() {
+            window.location = window.location.href;
+        }
+        setInterval('autoRefresh()', 15000);
+    </script>
 </head>
 <body>
     <div>
-        Water: {{.Water}} <br>
+        Water: {{.Water}} meter <br>
         Water Status: {{.WaterStatus}} <br>
-        Wind: {{.Wind}} <br>
+        Wind: {{.Wind}} meter/detik <br>
         Wind Status: {{.WindStatus}} <br>
     </div>
 </body>

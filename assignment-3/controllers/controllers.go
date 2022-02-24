@@ -57,15 +57,15 @@ func (wi wind) getStatus() string {
 	return status
 }
 
-func getData() (int, int) {
-	water := rand.Intn(100)
-	wind := rand.Intn(100)
+func getValues() (int, int) {
+	water := rand.Intn(99) + 1
+	wind := rand.Intn(99) + 1
 
 	return water, wind
 }
 
-func ShowStatus(w http.ResponseWriter, r *http.Request) {
-	waterValue, windValue := getData()
+func GenerateStatus() Values {
+	waterValue, windValue := getValues()
 
 	wa := water{value: waterValue}
 	wi := wind{value: windValue}
@@ -73,14 +73,61 @@ func ShowStatus(w http.ResponseWriter, r *http.Request) {
 	waterStatus := wa.getStatus()
 	windStatus := wi.getStatus()
 
-	values := &Values{
+	values := Values{
 		Water:       waterValue,
 		Wind:        windValue,
 		WaterStatus: waterStatus,
 		WindStatus:  windStatus,
 	}
 
-	v, err := json.Marshal(values)
+	return values
+}
+
+func ShowStatus(w http.ResponseWriter, r *http.Request) {
+	// w.Header().Set("Content-Type", "application/json")
+
+	// 3
+	// Make a 15 second repition
+	// ticker := time.NewTicker(5 * time.Second)
+
+	// valuesChan := make(chan Values)
+	// valuesChan <- GenerateStatus()
+	// values := <-valuesChan
+
+	// quit := make(chan struct{})
+	// go func() {
+	// 	for {
+	// 		select {
+	// 		case <-ticker.C:
+	// 			valuesChan <- GenerateStatus()
+	// 			values = <-valuesChan
+	// 		case <-quit:
+	// 			ticker.Stop()
+	// 			return
+	// 		}
+	// 	}
+	// }()
+
+	// 2
+	// waterValue, windValue := getValues()
+
+	// wa := water{value: waterValue}
+	// wi := wind{value: windValue}
+
+	// waterStatus := wa.getStatus()
+	// windStatus := wi.getStatus()
+
+	// values := &Values{
+	// 	Water:       waterValue,
+	// 	Wind:        windValue,
+	// 	WaterStatus: waterStatus,
+	// 	WindStatus:  windStatus,
+	// }
+
+	// 3
+	values := GenerateStatus()
+
+	_, err := json.Marshal(values)
 	if err != nil {
 		panic(err)
 	}
@@ -95,7 +142,7 @@ func ShowStatus(w http.ResponseWriter, r *http.Request) {
 
 		tpl.Execute(w, values)
 
-		json.NewEncoder(w).Encode(v)
+		// json.NewEncoder(w).Encode(v)
 		return
 	}
 
