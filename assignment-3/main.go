@@ -4,8 +4,6 @@ import (
 	"net/http"
 
 	"go-assignment-3/controllers"
-
-	_ "github.com/gin-gonic/gin"
 )
 
 var PORT = ":3000"
