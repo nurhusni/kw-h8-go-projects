@@ -24,7 +24,6 @@ type Photo struct {
 	UpdatedAt time.Time
 	UserID    uint
 	Comments  []Comment
-	// UserID (foreign key of User)
 }
 
 type Comment struct {
@@ -34,8 +33,6 @@ type Comment struct {
 	UpdatedAt time.Time
 	UserID    uint
 	PhotoID   uint
-	// UserID (foreign key of User)
-	// PhotoID (foreign key of Photo)
 }
 
 type SocialMedia struct {
@@ -43,5 +40,4 @@ type SocialMedia struct {
 	Name           string
 	SocialMediaURL string
 	UserID         uint
-	// UserID
 }

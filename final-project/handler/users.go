@@ -1,9 +1,14 @@
 package handler
 
-import "net/http"
+import (
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
+)
 
-type UserHandler struct{}
+type UserHandler struct {
+	DB *gorm.DB
+}
 
-func (u UserHandler) Create(w http.ResponseWriter, r *http.Request) {
+func (idb *UserHandler) RegisterUser(c *gin.Context) {
 
 }
