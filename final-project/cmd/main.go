@@ -1,7 +1,7 @@
 package main
 
 import (
-	"khg-final-project/handler"
+	handler "khg-final-project/handler/controllers"
 	"khg-final-project/infra"
 
 	_ "github.com/dgrijalva/jwt-go"
@@ -25,10 +25,18 @@ func main() {
 
 	infra.StartDB()
 
-	db := infra.GetDB()
-	userDB := &handler.UserHandler{DB: db}
+	// db := infra.GetDB()
+	// userDB := &handler.UserHandler{DB: db}
 	router := gin.Default()
 
-	router.POST("/users/register", userDB.RegisterUser)
+	userRouter := router.Group("/users")
+	{
+		userRouter.POST("/register", handler.RegisterUser)
+		userRouter.POST("/login", handler.LoginUser)
+	}
+
 	router.Run(PORT)
+
+	// router.POST("/users/register", userDB.RegisterUser)
+	// router.Run(PORT)
 }
