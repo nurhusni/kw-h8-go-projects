@@ -27,7 +27,7 @@ import (
 // mux.HandleFunc("/", h.Employee.Create)
 
 func main() {
-	const PORT = ":5432"
+	const PORT = ":3000"
 
 	infra.StartDB()
 

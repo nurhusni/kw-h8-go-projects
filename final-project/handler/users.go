@@ -32,7 +32,7 @@ func (userDB *UserHandler) RegisterUser(c *gin.Context) {
 		log.Fatal("Failed to parse to uint64", err)
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 16)
 	if err != nil {
 		log.Fatal("Failed to hash password", err)
 	}
