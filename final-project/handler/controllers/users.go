@@ -35,6 +35,8 @@ func RegisterUser(c *gin.Context) {
 		log.Fatal(err)
 	}
 
+	User.Password = utils.HashPassword(User.Password)
+
 	err = db.Debug().Create(&User).Error
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -49,6 +51,7 @@ func RegisterUser(c *gin.Context) {
 		"email":    User.Email,
 		"id":       User.ID,
 		"username": User.Username,
+		"password": User.Password,
 	})
 
 	// age := c.PostForm("age")
@@ -97,14 +100,14 @@ func LoginUser(c *gin.Context) {
 		c.ShouldBind(&User)
 	}
 
-	// password = User.Password
+	password = User.Password
 
-	err := db.Preload("Photos").Preload("Comments").Preload("SocialMedias").Find(&User).Error
-	if err != nil {
-		log.Fatal(err)
-	}
+	// err := db.Preload("Photos").Preload("Comments").Preload("SocialMedias").Find(&User).Error
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
-	err = db.Debug().Where("email = ?", User.Email).Take(&User).Error
+	err := db.Debug().Where("email = ?", User.Email).Take(&User).Error
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error":   "Unauthorized",
