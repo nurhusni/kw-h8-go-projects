@@ -20,12 +20,6 @@ import (
 // utils -> helper (jwt go, generate token, validate token)
 // tests -> jwt go
 
-// h := handler.NewHandler()
-// _ = h
-
-// mux := http.NewServeMux()
-// mux.HandleFunc("/", h.Employee.Create)
-
 func main() {
 	const PORT = ":3000"
 
