@@ -2,9 +2,8 @@ package infra
 
 import (
 	"fmt"
+	"khg-final-project/models"
 	"log"
-
-	"khg-final-project/entity"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -30,7 +29,7 @@ func StartDB() {
 
 	fmt.Println("Database connected")
 
-	db.AutoMigrate(entity.User{}, entity.Photo{}, entity.Comment{}, entity.SocialMedia{})
+	db.AutoMigrate(models.User{}, models.Photo{}, models.Comment{}, models.SocialMedia{})
 }
 
 func GetDB() *gorm.DB {

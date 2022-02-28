@@ -1,26 +1,28 @@
 package handler
 
 import (
-	"khg-final-project/entity"
+	"khg-final-project/infra"
+	"khg-final-project/models"
+	"khg-final-project/utils"
 	"log"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
-type UserHandler struct {
-	DB *gorm.DB
-}
+var (
+	appJson = "application/json"
+)
 
-func (userDB *UserHandler) RegisterUser(c *gin.Context) {
+func RegisterUser(c *gin.Context) {
 	var (
-		user   entity.User
+		user   models.User
 		result gin.H
 	)
+
+	db := infra.GetDB()
 
 	age := c.PostForm("age")
 	email := c.PostForm("email")
@@ -32,24 +34,21 @@ func (userDB *UserHandler) RegisterUser(c *gin.Context) {
 		log.Fatal("Failed to parse to uint64", err)
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 16)
-	if err != nil {
-		log.Fatal("Failed to hash password", err)
-	}
+	hashedPassword := utils.HashPassword(password)
 
 	user.Age = uint(ageUint64)
 	user.Email = email
-	user.Password = string(hashedPassword)
+	user.Password = hashedPassword
 	user.Username = username
 	user.CreatedAt = time.Now()
-	user.UpdatedAt = time.Now()
+	user.UpdatedAt = time.Time{}
 
-	err = userDB.DB.Preload("Photos").Preload("Comments").Preload("SocialMedias").Find(&user).Error
+	err = db.Preload("Photos").Preload("Comments").Preload("SocialMedias").Find(&user).Error
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = userDB.DB.Create(&user).Error
+	err = db.Create(&user).Error
 	if err != nil {
 		result = gin.H{
 			"result": "Data isn't created",
@@ -57,8 +56,9 @@ func (userDB *UserHandler) RegisterUser(c *gin.Context) {
 	}
 
 	result = gin.H{
-		"result": user,
+		"status": http.StatusCreated,
+		"data":   user,
 	}
 
-	c.JSON(http.StatusOK, result)
+	c.JSON(http.StatusCreated, result)
 }
