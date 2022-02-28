@@ -89,11 +89,14 @@ func RegisterUser(c *gin.Context) {
 }
 
 func LoginUser(c *gin.Context) {
+	var (
+		User     models.User
+		password string
+		err      error
+	)
+
 	db := infra.GetDB()
 	contentType := utils.GetContentType(c)
-	User := models.User{}
-	password := ""
-
 	if contentType == appJson {
 		c.ShouldBindJSON(&User)
 	} else {
@@ -102,12 +105,12 @@ func LoginUser(c *gin.Context) {
 
 	password = User.Password
 
-	// err := db.Preload("Photos").Preload("Comments").Preload("SocialMedias").Find(&User).Error
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+	err = db.Preload("Photos").Preload("Comments").Preload("SocialMedias").Error
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	err := db.Debug().Where("email = ?", User.Email).Take(&User).Error
+	err = db.Debug().Where("email = ?", User.Email).Take(&User).Error
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error":   "Unauthorized",
