@@ -1,4 +1,4 @@
-package handler
+package controllers
 
 var (
 	appJson = "application/json"

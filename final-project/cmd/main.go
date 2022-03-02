@@ -1,8 +1,8 @@
 package main
 
 import (
-	controllers "khg-final-project/handler/controllers"
-	middlewares "khg-final-project/handler/middlewares"
+	"khg-final-project/handler/controllers"
+	"khg-final-project/handler/middlewares"
 	"khg-final-project/infra"
 
 	"github.com/gin-gonic/gin"
