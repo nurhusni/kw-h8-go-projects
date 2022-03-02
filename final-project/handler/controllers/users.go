@@ -14,9 +14,9 @@ import (
 
 func RegisterUser(c *gin.Context) {
 	db = infra.GetDB()
-	contentType := utils.GetContentType(c)
 	User := models.User{}
 
+	contentType := utils.GetContentType(c)
 	if contentType == appJson {
 		c.ShouldBindJSON(&User)
 	} else {
@@ -40,22 +40,18 @@ func RegisterUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
+		"id":       User.ID,
 		"age":      User.Age,
 		"email":    User.Email,
-		"id":       User.ID,
 		"username": User.Username,
 		"password": User.Password,
 	})
 }
 
 func LoginUser(c *gin.Context) {
-	var (
-		User     models.User
-		password string
-		err      error
-	)
-
 	db = infra.GetDB()
+	User := models.User{}
+
 	contentType := utils.GetContentType(c)
 	if contentType == appJson {
 		c.ShouldBindJSON(&User)
@@ -63,7 +59,7 @@ func LoginUser(c *gin.Context) {
 		c.ShouldBind(&User)
 	}
 
-	password = User.Password
+	password := User.Password
 
 	err = db.Preload("Photos").Preload("Comments").Preload("SocialMedias").Error
 	if err != nil {
@@ -91,25 +87,20 @@ func LoginUser(c *gin.Context) {
 	token := utils.GenerateToken(User.ID, User.Email)
 
 	c.JSON(http.StatusOK, gin.H{
-		"id":         User.ID,
-		"email":      User.Email,
-		"username":   User.Username,
-		"age":        User.Age,
-		"updated_at": User.UpdatedAt,
-		"token":      token,
+		"token": token,
 	})
 }
 
 func UpdateUser(c *gin.Context) {
 	db = infra.GetDB()
-	userData := c.MustGet("userData").(jwt.MapClaims)
-	contentType := utils.GetContentType(c)
 	OldUser := models.User{}
 	NewUser := models.User{}
 
 	paramId, _ := strconv.Atoi(c.Param("userId"))
+	userData := c.MustGet("userData").(jwt.MapClaims)
 	userId := uint(userData["id"].(float64))
 
+	contentType := utils.GetContentType(c)
 	if contentType == appJson {
 		c.ShouldBindJSON(&NewUser)
 	} else {
@@ -150,7 +141,15 @@ func DeleteUser(c *gin.Context) {
 
 	paramId, _ := strconv.Atoi(c.Param("userId"))
 
-	err := db.Model(&User).Delete(&User, paramId).Error
+	err = db.First(&User, paramId).Error
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Data Not Found",
+			"message": err.Error(),
+		})
+	}
+
+	err = db.Model(&User).Delete(&User, paramId).Error
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":   "Bad Request",
