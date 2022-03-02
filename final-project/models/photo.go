@@ -15,8 +15,20 @@ type Photo struct {
 	User     *User
 }
 
-func (u *Photo) BeforeCreate(tx *gorm.DB) (err error) {
-	_, errCreate := govalidator.ValidateStruct(u)
+func (p *Photo) BeforeCreate(tx *gorm.DB) (err error) {
+	_, errCreate := govalidator.ValidateStruct(p)
+
+	if errCreate != nil {
+		err = errCreate
+		return
+	}
+
+	err = nil
+	return
+}
+
+func (p *Photo) BeforeUpdate(tx *gorm.DB) (err error) {
+	_, errCreate := govalidator.ValidateStruct(p)
 
 	if errCreate != nil {
 		err = errCreate

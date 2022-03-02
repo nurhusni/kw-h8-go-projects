@@ -12,8 +12,20 @@ type SocialMedia struct {
 	UserID         uint   `json:"user_id"`
 }
 
-func (u *SocialMedia) BeforeCreate(tx *gorm.DB) (err error) {
-	_, errCreate := govalidator.ValidateStruct(u)
+func (sm *SocialMedia) BeforeCreate(tx *gorm.DB) (err error) {
+	_, errCreate := govalidator.ValidateStruct(sm)
+
+	if errCreate != nil {
+		err = errCreate
+		return
+	}
+
+	err = nil
+	return
+}
+
+func (sm *SocialMedia) BeforeUpdate(tx *gorm.DB) (err error) {
+	_, errCreate := govalidator.ValidateStruct(sm)
 
 	if errCreate != nil {
 		err = errCreate
