@@ -6,7 +6,7 @@ import "github.com/gin-gonic/gin"
 // 	appJson = "application/json"
 // )
 
-func CreateSocialMedia(c *gin.Context) {
+func AddSocialMedia(c *gin.Context) {
 
 }
 

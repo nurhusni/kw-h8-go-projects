@@ -49,13 +49,19 @@ func UserAuthorization() gin.HandlerFunc {
 }
 
 func PhotoAuthorization() gin.HandlerFunc {
+	return func(c *gin.Context) {
 
+	}
 }
 
 func CommentAuthorization() gin.HandlerFunc {
+	return func(c *gin.Context) {
 
+	}
 }
 
 func SocialMediaAuthorization() gin.HandlerFunc {
+	return func(c *gin.Context) {
 
+	}
 }

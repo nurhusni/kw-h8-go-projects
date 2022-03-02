@@ -37,10 +37,28 @@ func main() {
 	photoRouter := router.Group("/photos")
 	{
 		photoRouter.Use(middlewares.Authentication())
-		photoRouter.POST("/", middlewares.PhotoAuthorization(), controllers.AddPhoto)
-		photoRouter.GET("/", middlewares.UserAuthorization(), controllers.GetPhotos)
-		photoRouter.PUT("/:userId", middlewares.UserAuthorization(), controllers.UpdateUser)
-		photoRouter.DELETE("/:userId", middlewares.UserAuthorization(), controllers.DeleteUser)
+		photoRouter.POST("/", controllers.AddPhoto)
+		photoRouter.GET("/", controllers.GetPhotos)
+		photoRouter.PUT("/:userId", middlewares.PhotoAuthorization(), controllers.UpdateUser)
+		photoRouter.DELETE("/:userId", middlewares.PhotoAuthorization(), controllers.DeleteUser)
+	}
+
+	commentRouter := router.Group("/comments")
+	{
+		commentRouter.Use(middlewares.Authentication())
+		commentRouter.POST("/", controllers.CreateComment)
+		commentRouter.GET("/", controllers.GetComments)
+		commentRouter.PUT("/:commentId", middlewares.CommentAuthorization(), controllers.UpdateComment)
+		commentRouter.DELETE("/:commentId", middlewares.CommentAuthorization(), controllers.DeleteComment)
+	}
+
+	socialMediaRouter := router.Group("/socialmedias")
+	{
+		socialMediaRouter.Use(middlewares.Authentication())
+		socialMediaRouter.POST("/", controllers.AddSocialMedia)
+		socialMediaRouter.GET("/", controllers.GetSocialMedias)
+		socialMediaRouter.PUT("/:socialMediaId", middlewares.SocialMediaAuthorization(), controllers.UpdateSocialMedia)
+		socialMediaRouter.DELETE("/:socialMediaId", middlewares.SocialMediaAuthorization(), controllers.DeleteSocialMedia)
 	}
 
 	router.Run(PORT)
