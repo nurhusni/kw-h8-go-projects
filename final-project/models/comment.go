@@ -7,9 +7,11 @@ import (
 
 type Comment struct {
 	GormModel
-	Message string `gorm:"not null" json:"comment" form:"comment" valid:"required~Comment is required"`
+	Message string `gorm:"not null" json:"message" form:"message" valid:"required~Message is required"`
 	UserID  uint   `json:"user_id"`
 	PhotoID uint   `json:"photo_id"`
+	User    *User
+	Photo   *Photo
 }
 
 func (c *Comment) BeforeCreate(tx *gorm.DB) (err error) {
