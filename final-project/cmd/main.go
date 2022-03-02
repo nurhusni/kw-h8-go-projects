@@ -55,7 +55,7 @@ func main() {
 	socialMediaRouter := router.Group("/socialmedias")
 	{
 		socialMediaRouter.Use(middlewares.Authentication())
-		socialMediaRouter.POST("/", controllers.AddSocialMedia)
+		socialMediaRouter.POST("/", controllers.CreateSocialMedia)
 		socialMediaRouter.GET("/", controllers.GetSocialMedias)
 		socialMediaRouter.PUT("/:socialMediaId", middlewares.SocialMediaAuthorization(), controllers.UpdateSocialMedia)
 		socialMediaRouter.DELETE("/:socialMediaId", middlewares.SocialMediaAuthorization(), controllers.DeleteSocialMedia)
