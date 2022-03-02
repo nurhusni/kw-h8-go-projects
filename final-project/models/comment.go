@@ -8,8 +8,8 @@ import (
 type Comment struct {
 	GormModel
 	Message string `gorm:"not null" json:"comment" form:"comment" valid:"required~Comment is required"`
-	UserID  uint
-	PhotoID uint
+	UserID  uint   `json:"user_id"`
+	PhotoID uint   `json:"photo_id"`
 }
 
 func (u *Comment) BeforeCreate(tx *gorm.DB) (err error) {

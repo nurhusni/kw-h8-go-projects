@@ -4,6 +4,7 @@ import (
 	"khg-final-project/infra"
 	"khg-final-project/models"
 	"khg-final-project/utils"
+	"log"
 	"net/http"
 
 	"github.com/dgrijalva/jwt-go"
@@ -11,7 +12,7 @@ import (
 )
 
 func AddPhoto(c *gin.Context) {
-	db := infra.GetDB()
+	db = infra.GetDB()
 	userData := c.MustGet("userData").(jwt.MapClaims)
 	contentType := utils.GetContentType(c)
 
@@ -26,7 +27,7 @@ func AddPhoto(c *gin.Context) {
 
 	Photo.UserID = userID
 
-	err := db.Debug().Create(&Photo).Error
+	err = db.Debug().Create(&Photo).Error
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":   "Bad Request",
@@ -39,7 +40,18 @@ func AddPhoto(c *gin.Context) {
 }
 
 func GetPhotos(c *gin.Context) {
+	db = infra.GetDB()
+	// userData := c.MustGet("userData").(jwt.MapClaims)
+	// contentType := utils.GetContentType(c)
+	// userId := uint(userData["id"].(float64))
 
+	Photos := []models.Photo{}
+	err = db.Debug().Preload("Comments").Preload("User").Find(&Photos).Error
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	c.JSON(http.StatusOK, Photos)
 }
 
 func UpdatePhoto(c *gin.Context) {

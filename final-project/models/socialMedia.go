@@ -9,7 +9,7 @@ type SocialMedia struct {
 	ID             uint   `gorm:"primaryKey;autoIncrement" json:"id"`
 	Name           string `gorm:"not null" json:"name" form:"name" valid:"required~Name is required"`
 	SocialMediaURL string `gorm:"not null" json:"social_media_url" form:"social_media_url" valid:"required~Social Media URL is required"`
-	UserID         uint
+	UserID         uint   `json:"user_id"`
 }
 
 func (u *SocialMedia) BeforeCreate(tx *gorm.DB) (err error) {

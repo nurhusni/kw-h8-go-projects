@@ -13,7 +13,7 @@ import (
 )
 
 func RegisterUser(c *gin.Context) {
-	db := infra.GetDB()
+	db = infra.GetDB()
 	contentType := utils.GetContentType(c)
 	User := models.User{}
 
@@ -55,7 +55,7 @@ func LoginUser(c *gin.Context) {
 		err      error
 	)
 
-	db := infra.GetDB()
+	db = infra.GetDB()
 	contentType := utils.GetContentType(c)
 	if contentType == appJson {
 		c.ShouldBindJSON(&User)
@@ -91,31 +91,42 @@ func LoginUser(c *gin.Context) {
 	token := utils.GenerateToken(User.ID, User.Email)
 
 	c.JSON(http.StatusOK, gin.H{
-		"token": token,
+		"id":         User.ID,
+		"email":      User.Email,
+		"username":   User.Username,
+		"age":        User.Age,
+		"updated_at": User.UpdatedAt,
+		"token":      token,
 	})
 }
 
 func UpdateUser(c *gin.Context) {
-	db := infra.GetDB()
+	db = infra.GetDB()
 	userData := c.MustGet("userData").(jwt.MapClaims)
 	contentType := utils.GetContentType(c)
-	User := models.User{}
+	OldUser := models.User{}
+	NewUser := models.User{}
 
 	paramId, _ := strconv.Atoi(c.Param("userId"))
 	userId := uint(userData["id"].(float64))
 
 	if contentType == appJson {
-		c.ShouldBindJSON(&User)
+		c.ShouldBindJSON(&NewUser)
 	} else {
-		c.ShouldBind(&User)
+		c.ShouldBind(&NewUser)
 	}
 
-	User.ID = userId
+	err = db.First(&OldUser, paramId).Error
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Data Not Found",
+			"message": err.Error(),
+		})
+	}
 
-	err := db.Model(&User).Where("id = ?", paramId).Updates(models.User{
-		Username: User.Username,
-		Email:    User.Email,
-	}).Error
+	NewUser.ID = userId
+
+	err = db.Model(&OldUser).Updates(&NewUser).Error
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":   "Bad Request",
@@ -125,23 +136,19 @@ func UpdateUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"id":         User.ID,
-		"email":      User.Email,
-		"username":   User.Username,
-		"age":        User.Age,
-		"updated_at": User.UpdatedAt,
+		"id":         OldUser.ID,
+		"email":      OldUser.Email,
+		"username":   OldUser.Username,
+		"age":        OldUser.Age,
+		"updated_at": OldUser.UpdatedAt,
 	})
 }
 
 func DeleteUser(c *gin.Context) {
-	db := infra.GetDB()
-	// userData := c.MustGet("userData").(jwt.MapClaims)
+	db = infra.GetDB()
 	User := models.User{}
 
 	paramId, _ := strconv.Atoi(c.Param("userId"))
-	// userId := uint(userData["id"].(float64))
-
-	// User.ID = userId
 
 	err := db.Model(&User).Delete(&User, paramId).Error
 	if err != nil {
