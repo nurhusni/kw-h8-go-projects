@@ -39,8 +39,8 @@ func main() {
 		photoRouter.Use(middlewares.Authentication())
 		photoRouter.POST("/", controllers.AddPhoto)
 		photoRouter.GET("/", controllers.GetPhotos)
-		photoRouter.PUT("/:userId", middlewares.PhotoAuthorization(), controllers.UpdateUser)
-		photoRouter.DELETE("/:userId", middlewares.PhotoAuthorization(), controllers.DeleteUser)
+		photoRouter.PUT("/:photoId", middlewares.PhotoAuthorization(), controllers.UpdatePhoto)
+		photoRouter.DELETE("/:photoId", middlewares.PhotoAuthorization(), controllers.DeletePhoto)
 	}
 
 	commentRouter := router.Group("/comments")
