@@ -1,9 +1,23 @@
 package handler
 
-import "net/http"
+import "github.com/gin-gonic/gin"
 
-type SocialMediaHandler struct{}
+// var (
+// 	appJson = "application/json"
+// )
 
-func (u SocialMediaHandler) Create(w http.ResponseWriter, r *http.Request) {
+func CreateSocialMedia(c *gin.Context) {
+
+}
+
+func GetSocialMedias(c *gin.Context) {
+
+}
+
+func UpdateSocialMedia(c *gin.Context) {
+
+}
+
+func DeleteSocialMedia(c *gin.Context) {
 
 }

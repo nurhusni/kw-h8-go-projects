@@ -6,20 +6,13 @@ import (
 	"khg-final-project/utils"
 	"log"
 	"net/http"
+	"strconv"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
 
-var (
-	appJson = "application/json"
-)
-
 func RegisterUser(c *gin.Context) {
-	// var (
-	// 	user   models.User
-	// 	result gin.H
-	// )
-
 	db := infra.GetDB()
 	contentType := utils.GetContentType(c)
 	User := models.User{}
@@ -53,39 +46,6 @@ func RegisterUser(c *gin.Context) {
 		"username": User.Username,
 		"password": User.Password,
 	})
-
-	// age := c.PostForm("age")
-	// email := c.PostForm("email")
-	// password := c.PostForm("password")
-	// username := c.PostForm("username")
-
-	// ageUint64, err := strconv.ParseUint(age, 10, 64)
-	// if err != nil {
-	// 	log.Fatal("Failed to parse to uint64", err)
-	// }
-
-	// hashedPassword := utils.HashPassword(password)
-
-	// user.Age = uint(ageUint64)
-	// user.Email = email
-	// user.Password = hashedPassword
-	// user.Username = username
-	// user.CreatedAt = time.Now()
-	// user.UpdatedAt = time.Time{}
-
-	// err = db.Create(&user).Error
-	// if err != nil {
-	// 	result = gin.H{
-	// 		"result": "Data isn't created",
-	// 	}
-	// }
-
-	// result = gin.H{
-	// 	"status": http.StatusCreated,
-	// 	"data":   user,
-	// }
-
-	// c.JSON(http.StatusCreated, result)
 }
 
 func LoginUser(c *gin.Context) {
@@ -132,5 +92,67 @@ func LoginUser(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"token": token,
+	})
+}
+
+func UpdateUser(c *gin.Context) {
+	db := infra.GetDB()
+	userData := c.MustGet("userData").(jwt.MapClaims)
+	contentType := utils.GetContentType(c)
+	User := models.User{}
+
+	paramId, _ := strconv.Atoi(c.Param("userId"))
+	userId := uint(userData["id"].(float64))
+
+	if contentType == appJson {
+		c.ShouldBindJSON(&User)
+	} else {
+		c.ShouldBind(&User)
+	}
+
+	User.ID = userId
+
+	err := db.Model(&User).Where("id = ?", paramId).Updates(models.User{
+		Username: User.Username,
+		Email:    User.Email,
+	}).Error
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Bad Request",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"id":         User.ID,
+		"email":      User.Email,
+		"username":   User.Username,
+		"age":        User.Age,
+		"updated_at": User.UpdatedAt,
+	})
+}
+
+func DeleteUser(c *gin.Context) {
+	db := infra.GetDB()
+	// userData := c.MustGet("userData").(jwt.MapClaims)
+	User := models.User{}
+
+	paramId, _ := strconv.Atoi(c.Param("userId"))
+	// userId := uint(userData["id"].(float64))
+
+	// User.ID = userId
+
+	err := db.Model(&User).Delete(&User, paramId).Error
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Bad Request",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Your account has been successfully deleted",
 	})
 }

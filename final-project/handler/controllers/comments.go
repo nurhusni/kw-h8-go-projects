@@ -1,13 +1,23 @@
 package handler
 
-import (
-	"gorm.io/gorm"
-)
+import "github.com/gin-gonic/gin"
 
-type CommentHandler struct {
-	DB *gorm.DB
+// var (
+// 	appJson = "application/json"
+// )
+
+func CreateComment(c *gin.Context) {
+
 }
 
-// func (u CommentHandler) Create(w http.ResponseWriter, r *http.Request) {
+func GetComments(c *gin.Context) {
 
-// }
+}
+
+func UpdateComment(c *gin.Context) {
+
+}
+
+func DeleteComment(c *gin.Context) {
+
+}

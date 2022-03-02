@@ -2,6 +2,7 @@ package main
 
 import (
 	controllers "khg-final-project/handler/controllers"
+	middlewares "khg-final-project/handler/middlewares"
 	"khg-final-project/infra"
 
 	"github.com/gin-gonic/gin"
@@ -27,6 +28,19 @@ func main() {
 	{
 		userRouter.POST("/register", controllers.RegisterUser)
 		userRouter.POST("/login", controllers.LoginUser)
+
+		userRouter.Use(middlewares.Authentication())
+		userRouter.PUT("/:userId", middlewares.UserAuthorization(), controllers.UpdateUser)
+		userRouter.DELETE("/:userId", middlewares.UserAuthorization(), controllers.DeleteUser)
+	}
+
+	photoRouter := router.Group("/photos")
+	{
+		photoRouter.Use(middlewares.Authentication())
+		photoRouter.POST("/", middlewares.PhotoAuthorization(), controllers.AddPhoto)
+		photoRouter.GET("/", middlewares.UserAuthorization(), controllers.GetPhotos)
+		photoRouter.PUT("/:userId", middlewares.UserAuthorization(), controllers.UpdateUser)
+		photoRouter.DELETE("/:userId", middlewares.UserAuthorization(), controllers.DeleteUser)
 	}
 
 	router.Run(PORT)
